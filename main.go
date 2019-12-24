@@ -199,9 +199,10 @@ var schema, _ = graphql.NewSchema(
 )
 
 var h = handler.New(&handler.Config{
-	Schema:   &schema,
-	Pretty:   true,
-	GraphiQL: true,
+	Schema:     &schema,
+	Pretty:     true,
+	GraphiQL:   false,
+	Playground: true,
 })
 
 func main() {
