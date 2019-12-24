@@ -1,13 +1,13 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"math/rand"
 	"net/http"
 	"time"
 
 	"github.com/graphql-go/graphql"
+	"github.com/graphql-go/handler"
 )
 
 // Product : contain product information
@@ -111,7 +111,7 @@ var mutationType = graphql.NewObject(
 						Type: graphql.NewNonNull(graphql.String),
 					},
 					"price": &graphql.ArgumentConfig{
-						Type: graphql.NewNonNull(graphql.String),
+						Type: graphql.NewNonNull(graphql.Float),
 					},
 				},
 				Resolve: func(p graphql.ResolveParams) (interface{}, error) {
@@ -198,22 +198,14 @@ var schema, _ = graphql.NewSchema(
 	},
 )
 
-func executeQuery(query string, schema graphql.Schema) *graphql.Result {
-	result := graphql.Do(graphql.Params{
-		Schema:        schema,
-		RequestString: query,
-	})
-	if len(result.Errors) > 0 {
-		fmt.Printf("Errors: %v", result.Errors)
-	}
-	return result
-}
+var h = handler.New(&handler.Config{
+	Schema:   &schema,
+	Pretty:   true,
+	GraphiQL: true,
+})
 
 func main() {
-	http.HandleFunc("/graphql", func(w http.ResponseWriter, r *http.Request) {
-		result := executeQuery(r.URL.Query().Get("query"), schema)
-		json.NewEncoder(w).Encode(result)
-	})
+	http.Handle("/graphql", h)
 
 	fmt.Println("Server is running on port 8080")
 	http.ListenAndServe(":8080", nil)
