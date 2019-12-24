@@ -1,4 +1,4 @@
-module github.com/3dw1nM0535/hommy
+module github.com/3dw1nM0535/graphql-go
 
 go 1.13
 
